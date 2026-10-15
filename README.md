@@ -1,3 +1,4 @@
+<img width="1863" height="910" alt="Captura de pantalla 2026-10-15 183135" src="https://github.com/user-attachments/assets/2a97991c-a074-4c4a-8273-ccc2eacc49fd" />
 # Finanzas
 
 Aplicación web de finanzas personales en español y en pesos colombianos (COP).
@@ -23,19 +24,19 @@ Luego abre http://localhost:8080
 | Archivo | Qué contiene |
 |---|---|
 | `index.html` | Estructura de la página y orden de carga |
-| `css/styles.css` | Estilos y diseño responsive |
-| `js/utilidades.js` | Fechas, formato de pesos, catálogos |
-| `js/logica.js` | Cálculos financieros, análisis y validación |
-| `js/datos-demo.js` | Datos de ejemplo |
-| `js/almacenamiento.js` | Guardado en el navegador |
-| `js/store.js` | Estado global y acciones |
-| `js/ui-base.js` | Íconos, avisos, modales y campos |
-| `js/movimientos.js` | Formulario y lista de movimientos |
-| `js/graficos.js` | KPI, gráfico donut y barras |
-| `js/modulos.js` | Presupuestos, ahorro, deudas, análisis y calendario |
-| `js/historial.js` | Filtros, historial y categorías |
-| `js/exportar.js` | Exportación a Excel, CSV y PDF |
-| `js/app.js` | App principal y arranque |
+| `styles.css` | Estilos y diseño responsive |
+| `utilidades.js` | Fechas, formato de pesos, catálogos |
+| `logica.js` | Cálculos financieros, análisis y validación |
+| `datos-demo.js` | Datos de ejemplo |
+| `almacenamiento.js` | Guardado en el navegador |
+| `store.js` | Estado global y acciones |
+| `ui-base.js` | Íconos, avisos, modales y campos |
+| `movimientos.js` | Formulario y lista de movimientos |
+| `graficos.js` | KPI, gráfico donut y barras |
+| `modulos.js` | Presupuestos, ahorro, deudas, análisis y calendario |
+| `historial.js` | Filtros, historial y categorías |
+| `exportar.js` | Exportación a Excel, CSV y PDF |
+| `app.js` | App principal y arranque |
 
 Los archivos `js/` se cargan en ese orden y comparten variables globales, así que
 si agregas uno nuevo, inclúyelo en `index.html` antes de `app.js`.
