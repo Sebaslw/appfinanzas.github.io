@@ -1,0 +1,371 @@
+/* ============================================================
+   styles.css - Estilos de la app Finanzas
+   Colores, tamaños y diseño responsive (escritorio, tablet, móvil).
+   ============================================================ */
+/* =========================================================
+   TOKENS
+   ========================================================= */
+/* Variables de diseño (colores, radios, transición y fuente). Cambiarlas aquí cambia toda la app.
+   También agrega margen para las barras del sistema en celulares (safe-area). */
+:root{
+  --bg:#090909; --surface:#171717; --surface-2:#202020; --surface-3:#272727;
+  --primary:#E86A3A; --primary-l:#F28A62; --primary-soft:rgba(232,106,58,.12); --primary-line:rgba(232,106,58,.55);
+  --text:#FFFFFF; --text-2:#A3A3A3; --text-3:#8a8a8a; --border:#303030; --border-soft:#262626;
+  --success:#3FB950; --danger:#E55353; --warn:#E3B341;
+  --r-xl:22px; --r-lg:16px; --r:12px; --r-sm:9px;
+  --t:180ms cubic-bezier(.2,.7,.2,1);
+  --font:"Onest", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+}
+/* Fondo oscuro también detrás de la página y al hacer scroll. */
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+/* El ancho de los elementos incluye relleno y borde (más fácil de maquetar). */
+*,*::before,*::after{box-sizing:inherit}
+/* Texto base: fuente Onest, tamaño 15px y números tabulares (las cifras quedan alineadas). */
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+/* Pantallas 4K: texto un poco más grande. */
+@media (min-width:2400px){body{font-size:17px}}
+/* Los controles heredan la fuente y el color de la página. */
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+/* Contorno coral visible al navegar con teclado (accesibilidad). */
+:focus-visible{outline:2px solid var(--primary-l);outline-offset:2px;border-radius:6px}
+/* Oculta visualmente un texto pero lo deja disponible para lectores de pantalla. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+/* Si el usuario pidió reducir animaciones en su sistema, se desactivan. */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}}
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+/* Contenedor general: ancho máximo y márgenes. */
+.app{max-width:1760px;margin:0 auto;padding:18px 22px 48px}
+/* Cabecera: nombre, fecha, selector de mes y botones. */
+.header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;flex-direction:column;margin-right:auto;min-width:0}
+.brand h1{font-size:20px;font-weight:700;margin:0;letter-spacing:-.01em}
+.brand .today{font-size:12.5px;color:var(--text-2)}
+/* Selector de periodo (mes anterior / mes / siguiente) en forma de píldora. */
+.period{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:3px}
+.period .lbl{min-width:140px;text-align:center;font-weight:600;font-size:14px;padding:6px 8px;border-radius:999px}
+.period .lbl:hover{background:var(--surface-2)}
+/* Botón redondo que solo contiene un ícono. */
+.icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:999px;color:var(--text-2);transition:background var(--t),color var(--t)}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
+.icon-btn.sm{width:28px;height:28px}
+/* Círculo con las iniciales del usuario. */
+.avatar{width:38px;height:38px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--primary-l);transition:border-color var(--t)}
+.avatar:hover{border-color:var(--primary)}
+
+/* Pestañas de secciones (escritorio y tablet). */
+.nav{display:flex;gap:4px;margin:0 0 18px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border-soft)}
+.nav::-webkit-scrollbar{display:none}
+.nav button{display:flex;align-items:center;gap:8px;padding:10px 14px;color:var(--text-2);font-weight:500;font-size:14px;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color var(--t),border-color var(--t)}
+.nav button:hover{color:var(--text)}
+.nav button[aria-current="page"]{color:var(--text);border-bottom-color:var(--primary)}
+
+/* DASHBOARD en 3 columnas: formulario | contenido | movimientos (pantallas de 1280px o más). */
+.dash{display:grid;gap:16px;grid-template-columns:300px minmax(0,1fr) 350px;grid-template-areas:"form main list";align-items:start}
+/* Las columnas laterales quedan fijas al hacer scroll (sticky). */
+.a-form{grid-area:form;position:sticky;top:16px}
+.a-main{grid-area:main;display:grid;gap:16px;min-width:0}
+.a-list{grid-area:list;position:sticky;top:16px;min-width:0}
+/* Entre 1024 y 1279px: formulario y movimientos a la izquierda, contenido a la derecha. */
+@media (max-width:1279px){
+  .dash{grid-template-columns:290px minmax(0,1fr);grid-template-areas:"form main" "list main"}
+  .a-list{position:static}
+}
+/* Tablet (768-1023px): formulario y movimientos arriba, contenido debajo. */
+@media (max-width:1023px){
+  .dash{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"form list" "main main"}
+  .a-form{position:static}
+}
+/* Móvil: una sola columna, se oculta la navegación superior y se dejan solo íconos. */
+@media (max-width:767px){
+  .app{padding:14px 12px 96px}
+  .dash{grid-template-columns:minmax(0,1fr);grid-template-areas:"form" "main" "list"}
+  .nav{display:none}
+  .period .lbl{min-width:112px;font-size:13px}
+  .hide-sm{display:none!important}
+}
+/* Rejillas que se acomodan solas: 2 columnas si caben, 1 si no. */
+.grid-2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.grid-kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))}
+.stack{display:grid;gap:16px}
+
+/* =========================================================
+   SURFACES
+   ========================================================= */
+/* TARJETAS (paneles) y títulos de sección. */
+.card{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--r-lg);padding:18px;min-width:0}
+.card.pad-lg{padding:22px}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.ttl{font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);margin:0}
+.muted{color:var(--text-2)}
+.small{font-size:12.5px}
+.xs{font-size:11.5px}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.link{color:var(--primary-l);font-weight:500;font-size:13px}
+.link:hover{text-decoration:underline}
+.divider{height:1px;background:var(--border-soft);margin:14px 0}
+
+/* KPI */
+/* Tarjetas KPI: número grande; la de saldo se resalta en coral (y en rojo si es negativo). */
+.kpi{padding:16px 18px}
+.kpi .v{font-size:clamp(24px,2.2vw,32px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px;line-height:1.1;overflow-wrap:anywhere}
+.kpi.accent{border-color:var(--primary-line);background:linear-gradient(0deg,var(--primary-soft),var(--primary-soft)),var(--surface)}
+.kpi.accent .v{color:var(--primary-l)}
+.kpi.neg .v{color:var(--danger)}
+/* Etiqueta de variación vs mes anterior (verde = bueno, rojo = malo). */
+.delta{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--text-2)}
+.delta.good{color:var(--success)}
+.delta.bad{color:var(--danger)}
+
+/* Buttons */
+/* BOTONES: normal, primario (coral), contorno, peligro, fantasma, ancho completo y pequeño. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:var(--r);font-weight:600;font-size:14px;border:1px solid var(--border);background:var(--surface-2);transition:background var(--t),border-color var(--t),transform var(--t),color var(--t)}
+.btn:hover{border-color:#444;background:var(--surface-3)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary:hover{background:var(--primary-l);border-color:var(--primary-l)}
+.btn.outline{background:transparent;border-color:var(--primary-line);color:var(--primary-l)}
+.btn.outline:hover{background:var(--primary-soft);border-color:var(--primary)}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--text-2)}
+.btn.ghost:hover{color:var(--text);background:var(--surface-2)}
+.btn.block{width:100%}
+.btn.sm{height:32px;padding:0 12px;font-size:13px;border-radius:var(--r-sm)}
+.btn[disabled]{opacity:.55;pointer-events:none}
+.btn.ok{background:var(--success);border-color:var(--success)}
+
+/* Botones segmentados (Gasto/Ingreso, Gastos/Ingresos/Saldo). aria-pressed marca el activo. */
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.seg button{height:38px;border-radius:var(--r-sm);border:1px solid var(--border);color:var(--text-2);font-weight:500;font-size:14px;transition:all var(--t)}
+.seg button:hover{color:var(--text);border-color:#454545}
+.seg button[aria-pressed="true"]{border-color:var(--primary);color:var(--primary-l);background:var(--primary-soft)}
+.seg.pill{display:inline-grid;background:var(--surface-2);padding:3px;border-radius:999px;gap:2px}
+.seg.pill button{height:28px;border:0;border-radius:999px;padding:0 12px;font-size:12.5px}
+.seg.pill button[aria-pressed="true"]{background:var(--surface-3);color:var(--text)}
+
+/* Forms */
+/* FORMULARIOS: campos, etiquetas, errores y el monto grande. */
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field>label,.field>.lbl,fieldset>legend{font-size:12.5px;color:var(--text-2);font-weight:500}
+fieldset{border:0;padding:0;margin:0 0 14px;min-width:0}
+fieldset>legend{padding:0;margin-bottom:8px}
+.input,select.input,textarea.input{width:100%;height:40px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:0 12px;font-size:14px;transition:border-color var(--t),background var(--t);color-scheme:dark}
+textarea.input{height:auto;min-height:64px;padding:10px 12px;resize:vertical}
+.input:hover{border-color:#444}
+.input:focus{outline:none;border-color:var(--primary);background:#1d1d1d}
+.input[aria-invalid="true"]{border-color:var(--danger)}
+.err{display:flex;align-items:center;gap:6px;color:#ff8a8a;font-size:12.5px}
+.amount{display:flex;align-items:baseline;gap:6px;border-bottom:1px solid var(--border);padding:4px 2px 10px;margin-bottom:16px;transition:border-color var(--t)}
+.amount:focus-within{border-color:var(--primary)}
+.amount.invalid{border-color:var(--danger)}
+.amount span{font-size:26px;color:var(--text-2);font-weight:600}
+.amount input{background:none;border:0;outline:none;font-size:30px;font-weight:700;width:100%;letter-spacing:-.02em;min-width:0}
+.amount input::placeholder{color:#4d4d4d}
+/* Chips de categoría (el seleccionado se pinta en coral). */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:999px;background:var(--surface-2);border:1px solid transparent;font-size:12.5px;color:var(--text-2);transition:all var(--t)}
+.chip:hover{color:var(--text);border-color:var(--border)}
+.chip[aria-pressed="true"]{background:var(--primary);color:#fff}
+.chip .dot{width:7px;height:7px}
+.chip.add{border:1px dashed var(--border);background:transparent}
+.dot{width:8px;height:8px;border-radius:999px;flex:none;display:inline-block}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.two{grid-template-columns:1fr}}
+/* En el panel lateral los campos fecha/método van uno debajo del otro para que no se corten. */
+.a-form .two{grid-template-columns:1fr}
+@media (max-width:1023px) and (min-width:560px){.a-form .two{grid-template-columns:1fr 1fr}}
+@media (max-width:767px){.a-form .two{grid-template-columns:1fr 1fr}}
+@media (max-width:380px){.a-form .two{grid-template-columns:1fr}}
+
+/* Transactions */
+/* FILAS DE MOVIMIENTOS: punto de color, textos, monto y acciones (más visibles al pasar el mouse). */
+.tx-list{list-style:none;margin:0;padding:0;display:grid}
+.tx{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 6px;border-bottom:1px solid var(--border-soft);border-radius:8px;transition:background var(--t)}
+.tx:last-child{border-bottom:0}
+.tx:hover{background:#1b1b1b}
+.tx .t1{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .t2{font-size:12px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .amt{font-weight:700;font-size:14.5px;text-align:right;white-space:nowrap}
+.tx .amt.in{color:var(--success)}
+.tx .acts{display:flex;justify-content:flex-end;gap:0;margin-top:2px;opacity:.5;transition:opacity var(--t)}
+.tx:hover .acts,.tx:focus-within .acts{opacity:1}
+@media (hover:none){.tx .acts{opacity:.9}}
+.tx .acts .icon-btn{width:26px;height:26px}
+.tx .acts .icon-btn.del:hover{color:var(--danger)}
+/* La lista del panel derecho tiene scroll propio en escritorio. */
+.scroll-y{max-height:calc(100vh - 250px);overflow:auto;margin:0 -6px;padding:0 6px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+@media (max-width:1279px){.scroll-y{max-height:none}}
+.search{position:relative}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3)}
+.search .input{padding-left:34px}
+
+/* Empty */
+/* Estados vacíos (cuando no hay datos). */
+.empty{display:grid;justify-items:center;text-align:center;gap:8px;padding:28px 12px;color:var(--text-2)}
+.empty .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);color:var(--primary-l)}
+.empty strong{color:var(--text);font-size:15px}
+.empty p{margin:0;max-width:34ch;font-size:13px}
+
+/* Charts */
+/* GRÁFICO DONUT y su leyenda. */
+.donut-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center}
+@media (max-width:520px){.donut-wrap{grid-template-columns:1fr;justify-items:center}}
+.donut{position:relative;width:180px;height:180px;flex:none}
+.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut circle.seg{transition:stroke-width var(--t),opacity var(--t);cursor:pointer}
+.donut .center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;padding:0 34px}
+.donut .center b{font-size:19px;font-weight:800;letter-spacing:-.02em}
+.donut .center span{font-size:11.5px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legend{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 16px;width:100%}
+.legend li button{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;padding:5px 6px;border-radius:7px;font-size:12.5px;text-align:left;color:var(--text-2);transition:background var(--t),color var(--t)}
+.legend li button:hover,.legend li button.on{background:var(--surface-2);color:var(--text)}
+.legend .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* GRÁFICO DE BARRAS: 6 columnas; el mes actual en coral y los negativos en rojo. */
+.bars{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;height:190px;padding-top:24px;position:relative}
+.bar{display:grid;grid-template-rows:1fr auto;height:100%;gap:8px;text-align:center}
+.bar .col{position:relative;display:flex;align-items:flex-end;justify-content:center;height:100%;border-radius:8px}
+.bar .fill{width:min(100%,38px);border-radius:7px 7px 3px 3px;background:rgba(232,106,58,.38);transition:height 260ms cubic-bezier(.2,.7,.2,1),background var(--t);min-height:3px}
+.bar.cur .fill{background:var(--primary)}
+.bar.neg .fill{background:rgba(229,83,83,.45)}
+.bar.cur.neg .fill{background:var(--danger)}
+.bar:hover .fill,.bar:focus-visible .fill{background:var(--primary-l)}
+.bar .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--text);opacity:0;transition:opacity var(--t);pointer-events:none}
+.bar.cur .tip,.bar:hover .tip,.bar:focus-visible .tip{opacity:1}
+.bar:hover ~ .bar.cur .tip{opacity:0}
+.bar .m{font-size:12px;color:var(--text-2);text-transform:capitalize}
+.bar.cur .m{color:var(--text)}
+
+/* Progress */
+/* Barras de progreso y sus colores por estado (normal, advertencia, crítico, excedido). */
+.prog{height:6px;border-radius:999px;background:var(--surface-3);overflow:hidden}
+.prog>i{display:block;height:100%;border-radius:999px;background:var(--primary);transition:width 260ms cubic-bezier(.2,.7,.2,1)}
+.prog.ok>i{background:var(--success)}
+.prog.warn>i{background:var(--warn)}
+.prog.crit>i{background:var(--primary)}
+.prog.over>i{background:var(--danger)}
+.prog.lg{height:9px}
+/* Etiquetas pequeñas de estado (Normal, Excedido, Al día...). */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--text-2);white-space:nowrap}
+.badge.ok{color:var(--success)}
+.badge.warn{color:var(--warn)}
+.badge.crit{color:var(--primary-l)}
+.badge.over{color:#fff;background:var(--danger)}
+
+/* Budgets */
+/* Tarjetas de presupuesto. */
+.budgets{display:grid;gap:10px 18px;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr))}
+.bud{padding:12px 12px 10px;border-radius:var(--r);background:var(--surface-2);border:1px solid transparent;display:grid;gap:8px}
+.bud.over{border-color:rgba(229,83,83,.55)}
+.bud .top{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.bud .nm{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13.5px;min-width:0}
+.bud .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bud-in{width:104px;height:30px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:0 8px;text-align:right;font-size:13px}
+.bud-in:focus{outline:none;border-color:var(--primary)}
+.bud .meta{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--text-2);flex-wrap:wrap}
+
+/* Insights */
+/* Lista de observaciones del análisis financiero con su color por tono. */
+.ins{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ins li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:var(--r);background:var(--surface-2);font-size:13.5px}
+.ins .ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--surface-3)}
+.ins .good .ic{color:var(--success)} .ins .warn .ic{color:var(--warn)} .ins .bad .ic{color:var(--danger)} .ins .info .ic{color:var(--primary-l)}
+.ins .tag{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:2px}
+
+/* Stats */
+/* Cuadros de estadísticas. */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+.stat{background:var(--surface-2);border-radius:var(--r);padding:12px 14px}
+.stat b{display:block;font-size:18px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}
+
+/* Calendar */
+/* CALENDARIO: 7 columnas (lunes a domingo). En móvil se reemplazan los montos por puntos. */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal .dow{font-size:11px;color:var(--text-3);text-align:center;padding-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.day{min-height:84px;border-radius:10px;background:var(--surface-2);border:1px solid transparent;padding:7px 8px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;transition:border-color var(--t),background var(--t)}
+.day:hover{border-color:#454545}
+.day.sel{border-color:var(--primary);background:var(--primary-soft)}
+.day.today .d{color:var(--primary-l)}
+.day .d{font-weight:700;font-size:13px}
+.day .in{color:var(--success);font-size:11px}
+.day .out{color:var(--text-2);font-size:11px}
+.day .dots{display:none;gap:3px;margin-top:auto}
+.day .dots i{width:5px;height:5px;border-radius:9px;background:var(--text-2)}
+.day .dots i.g{background:var(--success)}
+.blank{visibility:hidden}
+@media (max-width:640px){.day{min-height:52px;padding:6px}.day .in,.day .out{display:none}.day .dots{display:flex}}
+
+/* Goals & debts */
+/* Tarjetas de metas de ahorro y deudas. */
+.items{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+.item{background:var(--surface-2);border-radius:var(--r);padding:14px;display:grid;gap:10px}
+.item h3{margin:0;font-size:15px}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.kv div{font-size:11.5px;color:var(--text-2)}
+.kv b{display:block;color:var(--text);font-size:13.5px;font-weight:600}
+
+/* Header ring */
+/* Anillo de progreso del ahorro (conic-gradient pinta el porcentaje). */
+.ring{--p:0;width:92px;height:92px;border-radius:50%;background:conic-gradient(var(--primary) calc(var(--p)*1%),var(--surface-3) 0);display:grid;place-items:center;flex:none}
+.ring.done{background:conic-gradient(var(--success) calc(var(--p)*1%),var(--surface-3) 0)}
+.ring>div{width:74px;height:74px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-weight:800;font-size:17px}
+
+/* Modal */
+/* MODALES: fondo oscuro, ventana y animación. En móvil aparecen desde abajo. */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.66);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px;z-index:50;animation:fade 160ms ease}
+.modal{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;max-height:calc(100vh - 32px);overflow:auto;animation:pop 200ms cubic-bezier(.2,.7,.2,1)}
+.modal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modal-h h2{margin:0;font-size:17px}
+.modal-f{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+@keyframes fade{from{opacity:0}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.985)}}
+@media (max-width:560px){.overlay{place-items:end center;padding:0}.modal{border-radius:22px 22px 0 0;max-height:92vh;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}}
+
+/* Toasts */
+/* AVISOS flotantes (toasts) abajo a la derecha. */
+.toasts{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:8px;z-index:60;width:min(360px,calc(100vw - 24px))}
+@media (max-width:767px){.toasts{right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+.toast{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:#1f1f1f;border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:12px;padding:11px 12px;font-size:13.5px;box-shadow:0 12px 30px rgba(0,0,0,.35);animation:pop 200ms ease}
+.toast.success{border-left-color:var(--success)} .toast.success>svg{color:var(--success)}
+.toast.danger{border-left-color:var(--danger)} .toast.danger>svg{color:var(--danger)}
+.toast.info>svg{color:var(--primary-l)}
+
+/* Bottom nav */
+/* Barra de navegación inferior (solo en móvil). */
+.bnav{display:none}
+@media (max-width:767px){
+  .bnav{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(14,14,14,.94);backdrop-filter:blur(10px);border-top:1px solid var(--border-soft);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+  .bnav button{display:grid;justify-items:center;gap:3px;padding:5px 0;font-size:10px;color:var(--text-3);border-radius:10px}
+  .bnav button[aria-current="page"]{color:var(--primary-l)}
+}
+
+/* Skeleton */
+/* Bloques animados de carga (skeleton). */
+.sk{background:linear-gradient(90deg,#1a1a1a 0%,#242424 50%,#1a1a1a 100%);background-size:200% 100%;animation:sk 1.3s linear infinite;border-radius:var(--r-lg)}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* Filters */
+/* Filtros del historial y opciones del modal de exportación. */
+.filters{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));align-items:end}
+.filters .field{margin:0}
+.summary-line{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--text-2);margin:12px 0 4px}
+.summary-line b{color:var(--text)}
+.radio-row{display:flex;gap:8px;flex-wrap:wrap}
+.radio{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13.5px;cursor:pointer}
+.radio:has(input:checked){border-color:var(--primary);background:var(--primary-soft)}
+.radio input{accent-color:var(--primary)}
+.check{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--text-2)}
+.check input{accent-color:var(--primary);width:16px;height:16px}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+/* Calendario + panel del día seleccionado (una columna en tablet y móvil). */
+.cal-layout{display:grid;gap:16px;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);align-items:start}
+@media (max-width:1023px){.cal-layout{grid-template-columns:minmax(0,1fr)}}

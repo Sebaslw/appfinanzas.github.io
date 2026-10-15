@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  FINANZAS · Aplicación de finanzas personales (COP)
+
+  ESTRUCTURA DEL PROYECTO
+  index.html          esta página (estructura y carga de archivos)
+  css/styles.css      estilos
+  js/utilidades.js    fechas, formato de pesos, catálogos
+  js/logica.js        cálculos financieros, análisis y validación
+  js/datos-demo.js    datos de ejemplo
+  js/almacenamiento.js guardar en el navegador / nube
+  js/store.js         estado global y acciones
+  js/ui-base.js       íconos, avisos, modales, campos
+  js/movimientos.js   formulario y lista de movimientos
+  js/graficos.js      KPI, donut y barras
+  js/modulos.js       presupuestos, ahorro, deudas, análisis, calendario
+  js/historial.js     filtros, historial y categorías
+  js/exportar.js      Excel, CSV y PDF
+  js/app.js           app principal y arranque (va de último)
+  ============================================================
+-->
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<!-- Ajusta la página al ancho del dispositivo (viewport-fit=cover usa toda la pantalla en celulares con muesca) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Finanzas</title>
+<!-- Tipografía Onest desde Google Fonts (si no carga, se usa la fuente del sistema) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Ícono de la pestaña (dibujado en SVG, sin archivo extra) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%23E86A3A%22/%3E%3Ctext x=%2216%22 y=%2223%22 font-size=%2220%22 font-family=%22Arial%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22white%22%3E$%3C/text%3E%3C/svg%3E">
+<!-- Estilos de la app -->
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Aquí React dibuja toda la aplicación -->
+<div id="root"></div>
+<noscript>Esta aplicación necesita JavaScript.</noscript>
+<!-- Librerías: React (interfaz), ReactDOM (dibuja en la página) y htm (escribir HTML dentro de JavaScript sin compilar) -->
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<!-- Código de la app: el ORDEN importa (cada archivo usa lo definido en los anteriores; app.js arranca todo) -->
+<script src="utilidades.js"></script>
+<script src="logica.js"></script>
+<script src="datos-demo.js"></script>
+<script src="almacenamiento.js"></script>
+<script src="store.js"></script>
+<script src="ui-base.js"></script>
+<script src="movimientos.js"></script>
+<script src="graficos.js"></script>
+<script src="modulos.js"></script>
+<script src="historial.js"></script>
+<script src="exportar.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
